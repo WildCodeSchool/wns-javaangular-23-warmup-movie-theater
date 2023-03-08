@@ -15,7 +15,9 @@ Note : il existe `src/main/java/fr/cinema/package-info.java`. Il n'a qu'un but d
 ## Pré-requis
 Vous devez avoir VSCode avec le "Extension Pack for Java" et être capable de compiler un programme Java, et de l'exécuter
 
-## 1. Préparer l'environnement collaboratif
+## Phase 1
+
+### 1.1 Préparer l'environnement collaboratif
 
 Pour cet exercice, vous allez travailler en petits groupes. Dans le but de pouvoir collaborer efficacement, vous allez pouvoir tester la puissance de VSCode Live Share.
 
@@ -28,10 +30,10 @@ https://code.visualstudio.com/learn/collaboration/live-share#_get-started-with-l
 Cette étape est validée lorsque plusieurs membres de votre groupe peuvent modifier en même temps un fichier sur VSCode (ce readme par exemple :))
 
 
-## 2. Créer un programme basique
+### 1.2 Créer un programme basique
 Créer une classe `Main` (dans un nouveau fichier `Main.java` donc) avec une méthode `main` affichant une simple ligne dans la console "Bienvenue cher client, quel film voulez vous voir ?"
 
-## 3. Lire la demande du client
+### 1.3 Lire la demande du client
 Améliorer le programme pour que le client puisse saisir dans le terminal un nom de film.
 
 Le programme doit lire ce que l'utilisateur a rentré, et afficher une nouvelle ligne "Recherche du film [Remettre ce que l'utilisateur a saisi]"
@@ -39,7 +41,7 @@ Le programme doit lire ce que l'utilisateur a rentré, et afficher une nouvelle 
 Cet article explique comment lire depuis la console (Méthode 3 recommandée)
 https://www.geeksforgeeks.org/ways-to-read-input-from-console-in-java/
 
-## 4. Accéder au fichier des films
+### 1.4 Accéder au fichier des films
 Créer une nouvelle classe `MoviesDatabase` qui contient une méthode `String readAllMovies()`, permettant de lire le contenu du fichier des films.
 
 Le main va créer une instance (new) de la classe `MoviesDatabase`, et appeler la méthode readAllMovies pour afficher le contenu du fichier dans la console.
@@ -48,7 +50,7 @@ Cette étape est validée lorsque le programme, en plus de lire le nom du film, 
 
 https://pieces-of-code.com/guide/howto/java-files-read-write.html#fichiers-textes
 
-## 5. Récupérer la ligne d'un seul film
+### 1.5 Récupérer la ligne d'un seul film
 Améliorer la classe `MoviesDatabase` pour rajouter une méthode `String getMovieInfo(String movieName)`.
 
 Cette étape est plus compliquée, il faut parcourir le contenu du fichier, ligne par ligne, pour chercher le nom du film passé en paramètre de la méthode, puis retourner uniquement la ligne correspondant au bon film.
@@ -60,7 +62,7 @@ Aide :
 * https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html#contains(java.lang.CharSequence)
 * https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html#indexOf(java.lang.String)
 
-## 6. Créer une classe Movie
+### 1.6 Créer une classe Movie
 Créer une nouvelle classe `Movie` pour stocker les infos du film. Nous aurons donc les champs suivants : 
 * id -> nombre
 * title -> chaîne de caractère
@@ -71,6 +73,38 @@ Créer une nouvelle classe `Movie` pour stocker les infos du film. Nous aurons d
 Cette classe doit implémenter la méthode `toString()` pour afficher de façon élégante les informations du film.
 
 Cette étape est validée lorsque la méthode `MoviesDatabase.getMovieInfo(..)` retourne une instance de `Movie` et non une `String`
+
+## Phase 2
+
+### 2.1 Créer une classe de controller REST
+
+Créer une classe MoviesController annotée avec RestController
+
+Ce controller doit comporter 3 méthodes : 
+* `List<Movie> getAllMovies()`
+* `Movie getMovieByName(String name)`
+* `Movie getMovieById(Long id)`
+
+Tous ces endpoints répondent en méthode GET et retourne du JSON
+
+Le paramètre de getMovieByName est passé dans la query string (RequestParam)
+Le paramètre de getMovieById est passé dans le chemin (PathParam)
+
+Ils doivent tous avoir une javadoc, exemple ci dessous
+
+```java
+/**
+ * Ceci est une javadoc
+ * @param param1 doc du paramètre
+ */
+public String maMethode(int param1) {
+    // ...
+}
+```
+
+### 2.2 Générer la documentation OpenAPI de la classe de controller
+
+Ajouter la dépendance requise pour consulter la documentation à l'adresse http://localhost:8080/swagger-ui/index.html
 
 ## Optionnel : permette que l'utilisateur saisisse juste un mot du film
 
