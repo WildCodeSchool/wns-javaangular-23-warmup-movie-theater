@@ -11,7 +11,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MoviesDatabase {
+
     public String readAllMovies() {
 
 //        Path p = Paths.get("../resources/movies.csv");
@@ -37,7 +41,7 @@ public class MoviesDatabase {
         return url;
     }
 
-    public String getMovieInfo(String movieName) throws Exception {
+    public Movie getMovieInfo(String movieName) throws Exception {
         URL moviesDbFileUrl = resolveDatabaseFileURL();
 
         var scan = new Scanner(new File(moviesDbFileUrl.toURI()));
@@ -47,15 +51,13 @@ public class MoviesDatabase {
             if (line.contains(movieName)) {
 
                 short year1 = 2020;
-                var m = new Movie(1, "tit", 
+                var m = new Movie(1, movieName, 
                     List.of(year1),
                     4.4f, List.of("20:00") );
 
-                // m.title();
-                // m.years()
-                System.out.println(m);
+                return m;
 
-                return line;
+                // return line;
             }
         }
 
