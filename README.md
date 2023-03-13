@@ -106,15 +106,47 @@ public String maMethode(int param1) {
 
 Ajouter la dépendance requise pour consulter la documentation à l'adresse http://localhost:8080/swagger-ui/index.html
 
-## Optionnel : permette que l'utilisateur saisisse juste un mot du film
+## Phase 3
 
-## Optionnel : permette que l'utilisateur saisisse l'ID du film
+### 3.1 Créer une base de données pour le movie theater
 
-## Optionnel : générer un nouveau fichier CSV à partir d'une API en ligne
-L'API à utiliser : 
+Créer une base de données avec le SGBD de votre choix, ajouter JPA en dépendance du projet et configurer JPA pour y accéder 
+
+### 3.2 Créer l'entité Movie et son repository
+
+La classe Movie doit être une entité, donc utilisable par JPA pour faire le lien avec la BDD
+
+Créer le repository qui va avec
+
+### 3.3 Insérer des données dans la BDD
+
+A chaque démarrage de l'application, une méthode doit être appelée pour :
+* vider le contenu actuel de la table Movie (le repository permet de faire ça)
+* lire le fichier CSV à l'aide du class loader
+* créer un `Movie` pour chaque ligne du fichier CSV et le sauvegarder à l'aide du repositoru
+* la sauvegarde de plusieurs films doit être optimisée, et donc utiliser un insert en mode "batch" (opération efficace sur de multiple entrées), voir lien
+  * https://www.baeldung.com/spring-data-jpa-batch-inserts#howto
+
+
+Aide : 
+* https://www.baeldung.com/running-setup-logic-on-startup-in-spring
+
+### 3.4 Rajouter des endpoints 
+
+Créer les endpoints permettant 
+* de récupérer les films en passant juste une partie d'un titre de film (sans tenir compte de la casse)
+* de récupérer un film par son ID
+* *Optionnel* de récupérer les films dont la date de sortie est ultérieur à une date passée en paramètre
+
+### 3.5 Rajouter une vue permettant de saisir un nouveau film 
+
+Créer une vue Thymeleaf permettant de saisir un nouveau film dans la base de données de cette application
+
+### 3.6 Rajouter un endpoint pour insérer N nouveaux films aléatoires
+
+Se servir de cette API :  
 https://story-shack-cdn-v2.glitch.me/generators/random-movie-generator?count=25
 
-Comment faire une requête HTTP en Java : 
-https://www.baeldung.com/java-9-http-client
+Aide : 
+* Comment faire une requête HTTP en Java : https://www.baeldung.com/java-9-http-client
 
-## Optionnel : Adapter MoviesDatabase pour n'utiliser que l'API et plus le fichier CSV
