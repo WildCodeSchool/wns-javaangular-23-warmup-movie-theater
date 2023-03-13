@@ -1,10 +1,12 @@
 package fr.cinema.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +27,7 @@ public class MoviesController {
     MoviesRepository moviesRepository;
 
     /**
-     * Cette méthode permet de chercher un film par son. Il faut que le nom soit exactement le même 
+     * Cette méthode permet de chercher un film par son titre. Il faut que le nom soit exactement le même 
      * @param title le nom du film
      * @return
      * @throws Exception si la base ne peut pas être lue
@@ -37,6 +39,16 @@ public class MoviesController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ce   film n'existe pas !");
         }
         return movie;
+    }
+    /**
+     * Cette méthode permet de chercher un film par son ID 
+     * @param id l'id  du film
+     * @return
+     * @throws Exception si la base ne peut pas être lue
+     */
+    @GetMapping("/{id}")
+    public Optional<Movie> getMovieById(@PathVariable Long id) throws Exception {
+        return moviesRepository.findById(id);
     }
 
     @GetMapping("")
