@@ -44,9 +44,7 @@ public class DemoOpenapiApplication {
         // =====
 
         List<Movie> moviesFromCsv = moviesDatabase.getAllMovies();
-        for (Movie currentMovie : moviesFromCsv) {
-            moviesRepository.save(currentMovie);
-        }
+        moviesRepository.saveAll(moviesFromCsv);
     }
 
     @Bean
