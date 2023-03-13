@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 
@@ -18,7 +20,7 @@ public class MoviesDatabase {
 
     public String readAllMovies() {
 
-//        Path p = Paths.get("../resources/movies.csv");
+        // Path p = Paths.get("../resources/movies.csv");
 
         URL url = resolveDatabaseFileURL();
 
@@ -45,22 +47,33 @@ public class MoviesDatabase {
         URL moviesDbFileUrl = resolveDatabaseFileURL();
 
         var scan = new Scanner(new File(moviesDbFileUrl.toURI()));
-        while(scan.hasNextLine()){
+        while (scan.hasNextLine()) {
             String line = scan.nextLine();
             // System.out.println(line);
             if (line.contains(movieName)) {
-
-                short year1 = 2020;
-                var m = new Movie(1, movieName, 
-                    List.of(year1),
-                    4.4f, List.of("20:00") );
-
-                return m;
-
-                // return line;
+                return movieFromCsvLine(line);
             }
         }
 
         return null;
+    }
+
+    private Movie movieFromCsvLine(String line) {
+        String[] values = line.split("[;]");
+        try {
+            int index = 0;
+            long id = Long.parseLong(values[index++]);
+            String title = values[index++];
+            title = title.substring(1, title.length() - 1);
+
+            List<Short> years = Stream.of(values[index++].split("[,]"))
+                    .map((String s) -> Short.parseShort(s))
+                    .collect(Collectors.toList());
+            float price = Float.parseFloat(values[index++]);
+            List<String> times = List.of(values[index++].split("[,]"));
+            return new Movie(id, title, years, price, times);
+        } catch (Exception e) {
+            throw new RuntimeException("malformed csv file", e);
+        }
     }
 }
