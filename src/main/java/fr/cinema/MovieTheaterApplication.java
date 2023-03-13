@@ -30,7 +30,7 @@ public class MovieTheaterApplication {
 
     @EventListener
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        System.out.println("=======> TP ====> APPLICATION STARTED");
+        log.info("=======> TP ====> APPLICATION STARTED");
 
         moviesRepository.deleteAll();
 
@@ -49,6 +49,7 @@ public class MovieTheaterApplication {
 
         List<Movie> moviesFromCsv = moviesDatabase.getAllMovies();
         moviesRepository.saveAll(moviesFromCsv);
+        log.info("=======> TP ====> MOVIES DB INITIALIZED");
     }
 
     @Bean
