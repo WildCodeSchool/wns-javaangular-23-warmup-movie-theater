@@ -18,23 +18,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class MoviesDatabase {
 
-    public String readAllMovies() {
-
-        // Path p = Paths.get("../resources/movies.csv");
-
+    public List<Movie> getAllMovies() {
         URL url = resolveDatabaseFileURL();
 
         try {
             URI uri = url.toURI();
             Path path = Paths.get(uri);
             List<String> lines = Files.readAllLines(path);
-            return String.join("\n", lines);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+            // skip header
+            lines.remove(0);
 
-        return null;
+            return lines.stream().map(this::movieFromCsvLine).toList();
+        } catch (Exception e) {
+            throw new RuntimeException("cannot read all movies", e);
+        }
     }
 
     private URL resolveDatabaseFileURL() {
@@ -47,6 +44,10 @@ public class MoviesDatabase {
         URL moviesDbFileUrl = resolveDatabaseFileURL();
 
         var scan = new Scanner(new File(moviesDbFileUrl.toURI()));
+
+        // skip header
+        scan.nextLine();
+
         while (scan.hasNextLine()) {
             String line = scan.nextLine();
             // System.out.println(line);
