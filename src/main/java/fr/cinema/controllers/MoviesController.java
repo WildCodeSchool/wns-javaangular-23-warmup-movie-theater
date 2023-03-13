@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import fr.cinema.Movie;
 import fr.cinema.MoviesDatabase;
+import fr.cinema.repositories.MoviesRepository;
 
 @RestController
 @RequestMapping("/movies")
@@ -20,16 +21,19 @@ public class MoviesController {
     @Autowired
     MoviesDatabase moviesDatabase;
     
+    @Autowired
+    MoviesRepository moviesRepository;
+
     /**
      * Cette méthode permet de chercher un film par son. Il faut que le nom soit exactement le même 
-     * @param name le nom du film
+     * @param title le nom du film
      * @return
      * @throws Exception si la base ne peut pas être lue
      */
-    @GetMapping("/searchByName")
-    public Movie getMovieByName(@RequestParam String name) throws Exception {
-        Movie movie = moviesDatabase.getMovieInfo(name);
-        if (movie == null) {
+    @GetMapping("/searchBy")
+    public List<Movie> getMovieByTitle(@RequestParam String title) throws Exception {
+        List<Movie> movie = moviesRepository.findByTitleContainingIgnoreCase(title);
+        if (movie.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ce   film n'existe pas !");
         }
         return movie;
