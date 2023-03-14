@@ -7,9 +7,7 @@ import java.util.*;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,46 +20,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import fr.cinema.MoviesDatabase;
 import fr.cinema.domain.model.Movie;
+import fr.cinema.domain.model.MovieCollection;
+import fr.cinema.repositories.MoviesCollectionRepository;
 import fr.cinema.repositories.MoviesRepository;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-
-@Entity
-class MovieCollection {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-     Long id;
-
-     String title;
-
-    @OneToMany
-    List<Movie> movies = new ArrayList<>();
-
-    public MovieCollection(String title) {
-        this.title = title;
-    }
-
-    public MovieCollection() {
-    }
-
-
-}
-
-@Repository
-      interface MoviesCollectionAccess extends JpaRepository<MovieCollection, Long> {
-
-        List<MovieCollection> findByTitleContainingIgnoreCase(String title);
-        List<MovieCollection> findByMoviesTitleContainingIgnoreCase(String title);
-
-}
-
 
 @RestController
 @RequestMapping("/movies")
@@ -74,7 +38,7 @@ public class MoviesController {
     MoviesRepository moviesRepository;
 
     @Autowired
-    MoviesCollectionAccess collections;
+    MoviesCollectionRepository collections;
 
     @PostMapping("/createCollection")
     
@@ -120,7 +84,7 @@ public class MoviesController {
                 collectionVieuxFilm = collectionsVieuxFilm.get(0);
                 
             }
-            collectionVieuxFilm.movies.add(movie);
+            collectionVieuxFilm.getMovies().add(movie);
                 collections.save(collectionVieuxFilm);
             
         } else if (body.year() == LocalDate.now().getYear()) {
@@ -136,7 +100,7 @@ public class MoviesController {
                 targetCollection = collectionsFilmDeLannee.get(0);
                 
             }
-            targetCollection.movies.add(movie);
+            targetCollection.getMovies().add(movie);
                 collections.save(targetCollection);
         }
         
@@ -180,7 +144,7 @@ public class MoviesController {
                 collectionVieuxFilm = collectionsVieuxFilm.get(0);
                 
             }
-            collectionVieuxFilm.movies.add(movie);
+            collectionVieuxFilm.getMovies().add(movie);
                 collections.save(collectionVieuxFilm);
             
         } else if (body.year() == LocalDate.now().getYear()) {
@@ -196,7 +160,7 @@ public class MoviesController {
                 targetCollection = collectionsFilmDeLannee.get(0);
                 
             }
-            targetCollection.movies.add(movie);
+            targetCollection.getMovies().add(movie);
                 collections.save(targetCollection);
         }
         
@@ -227,7 +191,7 @@ System.out.println("movie=" + movie);
         // supprime le film des collections dans lesquelles il était
         var matchingCollections = collections .findByMoviesTitleContainingIgnoreCase(movie.getTitle());
         for (MovieCollection c : matchingCollections) {
-            c.movies.remove(movie);
+            c.getMovies().remove(movie);
             collections.save(c);
         }
         
@@ -245,7 +209,7 @@ System.out.println("movie=" + movie);
                 collectionVieuxFilm = collectionsVieuxFilm.get(0);
                 
             }
-            collectionVieuxFilm.movies.add(movie);
+            collectionVieuxFilm.getMovies().add(movie);
                 collections.save(collectionVieuxFilm);
             
         } else if (body.year() == LocalDate.now().getYear()) {
@@ -261,7 +225,7 @@ System.out.println("movie=" + movie);
                 targetCollection = collectionsFilmDeLannee.get(0);
                 
             }
-            targetCollection.movies.add(movie);
+            targetCollection.getMovies().add(movie);
                 collections.save(targetCollection);
         }
         
@@ -296,7 +260,7 @@ movie.getYears().addAll(List.of(body.year()));
         // supprime le film des collections dans lesquelles il était
         var matchingCollections = collections .findByMoviesTitleContainingIgnoreCase(movie.getTitle());
         for (MovieCollection c : matchingCollections) {
-            c.movies.remove(movie);
+            c.getMovies().remove(movie);
             collections.save(c);
         }
         
@@ -314,7 +278,7 @@ movie.getYears().addAll(List.of(body.year()));
                 collectionVieuxFilm = collectionsVieuxFilm.get(0);
                 
             }
-            collectionVieuxFilm.movies.add(movie);
+            collectionVieuxFilm.getMovies().add(movie);
                 collections.save(collectionVieuxFilm);
             
         } else if (body.year() == LocalDate.now().getYear()) {
@@ -330,7 +294,7 @@ movie.getYears().addAll(List.of(body.year()));
                 targetCollection = collectionsFilmDeLannee.get(0);
                 
             }
-            targetCollection.movies.add(movie);
+            targetCollection.getMovies().add(movie);
                 collections.save(targetCollection);
         }
         
