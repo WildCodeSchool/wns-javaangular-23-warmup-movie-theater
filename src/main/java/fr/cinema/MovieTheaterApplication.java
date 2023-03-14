@@ -12,6 +12,8 @@ import java.util.List;
 import fr.cinema.repositories.MoviesRepository;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
 @SpringBootApplication
 public class MovieTheaterApplication {
@@ -28,10 +30,15 @@ public class MovieTheaterApplication {
     @Autowired
     MoviesDatabase moviesDatabase;
 
+    @Autowired
+    EntityManager entityManager;
+
     @EventListener
+    @Transactional
     public void onApplicationEvent(ApplicationStartedEvent event) {
         log.info("=======> TP ====> APPLICATION STARTED");
 
+        entityManager.createQuery("DELETE FROM MovieCollection").executeUpdate();
         moviesRepository.deleteAll();
 
         var movie = new Movie();

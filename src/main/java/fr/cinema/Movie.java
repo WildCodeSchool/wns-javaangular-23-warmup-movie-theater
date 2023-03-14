@@ -19,11 +19,14 @@ public class Movie {
 
 
     private String title;
+
+    @ElementCollection // 1
+    @CollectionTable(name = "movie_years") // 2
+    @Column(name = "year") // 3
     private List<Short> years;
     private float price;
 
     @ElementCollection // 1
-    
     @CollectionTable(name = "movie_times") // 2
     @Column(name = "times") // 3
     private List<String> times;
