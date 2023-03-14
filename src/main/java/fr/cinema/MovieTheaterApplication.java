@@ -9,6 +9,8 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import java.util.List;
+
+import fr.cinema.domain.model.Movie;
 import fr.cinema.repositories.MoviesRepository;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

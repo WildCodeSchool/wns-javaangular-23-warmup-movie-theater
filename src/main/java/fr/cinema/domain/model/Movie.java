@@ -1,4 +1,4 @@
-package fr.cinema;
+package fr.cinema.domain.model;
 
 import java.util.List;
 

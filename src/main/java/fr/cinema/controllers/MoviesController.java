@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import fr.cinema.Movie;
 import fr.cinema.MoviesDatabase;
+import fr.cinema.domain.model.Movie;
 import fr.cinema.repositories.MoviesRepository;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;

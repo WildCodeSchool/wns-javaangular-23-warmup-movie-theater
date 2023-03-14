@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
 
+import fr.cinema.domain.model.Movie;
+
 @Component
 public class MoviesDatabase {
 
