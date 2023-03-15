@@ -1,5 +1,6 @@
 package fr.cinema.domain.services;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -141,19 +142,15 @@ public class MoviesService {
         }
     }
 
-    public void loadFromCsv(Path csvFilePath) {
+    public void loadFromCsv(Path csvFilePath) throws IOException {
         log.info("load movies from csv: " + csvFilePath);
-        try {
-            List<String> lines = Files.readAllLines(csvFilePath);
-            // skip header
-            lines.remove(0);
 
-            List<Movie> moviesFromCsv = lines.stream().map(this::movieFromCsvLine).toList();
-            moviesRepository.saveAll(moviesFromCsv);
-        } catch (Exception e) {
-            log.error("cannot load from CSV", e);
-            throw new RuntimeException("cannot read all movies", e);
-        }
+        List<String> lines = Files.readAllLines(csvFilePath);
+        // skip header
+        lines.remove(0);
+
+        List<Movie> moviesFromCsv = lines.stream().map(this::movieFromCsvLine).toList();
+        moviesRepository.saveAll(moviesFromCsv);
     }
 
     private Movie movieFromCsvLine(String line) {
