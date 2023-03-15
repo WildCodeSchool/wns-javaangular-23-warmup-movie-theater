@@ -1,5 +1,12 @@
 package fr.cinema;
 
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +15,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
-import java.util.List;
 
 import fr.cinema.domain.model.Movie;
+import fr.cinema.domain.services.MoviesService;
+import fr.cinema.repositories.MoviesCollectionRepository;
 import fr.cinema.repositories.MoviesRepository;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @SpringBootApplication
@@ -30,58 +37,40 @@ public class MovieTheaterApplication {
     MoviesRepository moviesRepository;
 
     @Autowired
-    MoviesDatabase moviesDatabase;
+    MoviesCollectionRepository moviesCollectionRepository;
 
     @Autowired
-    EntityManager entityManager;
+    MoviesService moviesService;
 
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        log.info("=======> TP ====> APPLICATION STARTED");
+        log.info("=======> MOVIE THEATER --- APPLICATION STARTED");
 
-        entityManager.createQuery("DELETE FROM MovieCollection").executeUpdate();
+        log.info("clean existing data from DB");
+        moviesCollectionRepository.deleteAll();
         moviesRepository.deleteAll();
 
-        var movie = new Movie();
-        movie.setPrice(20);
-        movie.setTitle("Matrix");
+        log.info("inject data from CSV to DB");
+        try {
 
-        Short year = 1990;
-        movie.setYears(List.of(year));
+            ClassLoader loader = getClass().getClassLoader();
+            URL url = loader.getResource("movies.csv");
+            URI uri = url.toURI();
+            Path csvFilePath = Paths.get(uri);
+            moviesService.loadFromCsv(csvFilePath);
+        } catch (Exception e) {
+            log.error("cannot load movies from CSV", e);
+            throw new RuntimeException("cannot load movies from CSV", e);
+        }
 
-        movie.setTimes(List.of("18:00", "22:00"));
-
-        moviesRepository.save(movie);
-
-        // =====
-
-        List<Movie> moviesFromCsv = moviesDatabase.getAllMovies();
-        moviesRepository.saveAll(moviesFromCsv);
-        log.info("=======> TP ====> MOVIES DB INITIALIZED");
+        log.info("=======> MOVIE THEATER --- INIT COMPLETE");
     }
 
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Correction de l'atelier OpenAPI 8 mars")
-                        .description("C'était une des manières de faire mais il n'y en a pas qu'une"));
+                .info(new Info().title("Gestion de films")
+                        .description("L'architecture de l'application a été revue"));
     }
-
-    /**
-     * System.out.println("Bienvenue cher client, quel film voulez vous voir ?");
-     * String movieName = System.console().readLine();
-     * 
-     * System.out.println("Recherche du film: " + movieName);
-     * 
-     * var moviesDb = new MoviesDatabase();
-     * 
-     * try {
-     * String r = moviesDb.getMovieInfo(movieName);
-     * System.out.println("La ligne du film: " + r);
-     * } catch (Exception e) {
-     * // TODO Auto-generated catch block
-     * e.printStackTrace();
-     * }
-     */
 }
