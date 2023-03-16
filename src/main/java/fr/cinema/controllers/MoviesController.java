@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import fr.cinema.domain.commands.CreateMovieCommand;
+import fr.cinema.domain.commands.CreateMoviesCollectionCommand;
 import fr.cinema.domain.commands.UpdateMovieCommand;
 import fr.cinema.domain.model.Movie;
-import fr.cinema.domain.model.MovieCollection;
 import fr.cinema.domain.services.MoviesService;
-import fr.cinema.repositories.MoviesCollectionRepository;
 
 @RestController
 @RequestMapping("/movies")
@@ -30,12 +29,10 @@ public class MoviesController{
     @Autowired
     MoviesService moviesService;
 
-    @Autowired
-    MoviesCollectionRepository collections;
-
     @PostMapping("/createCollection")
     public void createCollection(@RequestParam String title) throws Exception {
-        collections.save(new MovieCollection(title));
+        var command = new CreateMoviesCollectionCommand(title);
+        command.execute();
     }
 
     public static record NewMovieDTO(String title, float price, short year, List<String> times) {
