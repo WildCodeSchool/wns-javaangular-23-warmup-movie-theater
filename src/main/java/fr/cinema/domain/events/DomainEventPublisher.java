@@ -16,7 +16,7 @@ public class DomainEventPublisher {
         return instance;
     }
     
-    public void publishEvent(Object event) {
+    public void publishEvent(DomainEvent event) {
         publisher.publishEvent(event);
     }
 }
