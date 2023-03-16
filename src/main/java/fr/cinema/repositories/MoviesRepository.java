@@ -2,6 +2,8 @@ package fr.cinema.repositories;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,19 +15,21 @@ import fr.cinema.domain.model.Movie;
 
 @Repository
 public interface MoviesRepository extends JpaRepository<Movie, Long> {
+    static Logger log = LoggerFactory.getLogger(MoviesRepository.class);
+
     List<Movie> findByTitleContainingIgnoreCase(String title);
 
     @EventListener
     @Order(1)
     default void onMovieRegistered(MovieRegisteredEvent event) {
-        System.out.println("MOVIE CREATED " + event.movie());
+        log.info("MOVIE CREATED - persist in DB: " + event.movie());
         save(event.movie());
     }
 
     @EventListener
     @Order(1)
     default void onMovieUpdated(MovieUpdatedEvent event) {
-        System.out.println("MOVIE UPDATED " + event.movie());
+        log.info("MOVIE UPDATED - persist in DB: " + event.movie());
         save(event.movie());
     }
 }
