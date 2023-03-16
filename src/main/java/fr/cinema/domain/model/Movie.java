@@ -3,6 +3,9 @@ package fr.cinema.domain.model;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.cinema.domain.events.DomainEventPublisher;
 import fr.cinema.domain.events.MovieRegisteredEvent;
 import fr.cinema.domain.events.MovieUpdatedEvent;
@@ -17,6 +20,8 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Movie {
+  
+    private final static Logger log = LoggerFactory.getLogger(Movie.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,15 +91,19 @@ public class Movie {
         this.times = times;
     }
 
-    public void create() {
-        System.out.println("Movie.create requested");
+    public void create(String title, float price, short year, List<String> times) {
+        log.info("Movie.create requested - title=" + title);
+        setPrice(price);
+        setTitle(title);
+        setYears(List.of(year));
+        setTimes(times);
         DomainEventPublisher.getInstance().publishEvent(new MovieRegisteredEvent(this));
-        System.out.println("Movie.create event done");
+        log.info("Movie.create event done");
     }
 
     public void changeInformation(Optional<String> title, Optional<Float> price, Optional<Short> year,
             Optional<List<String>> times) {
-        System.out.println("Movie.changeInformation requested");
+        log.info("Movie.changeInformation requested");
         if (title.isPresent()) {
             setTitle(title.get());
         }
@@ -110,10 +119,10 @@ public class Movie {
             getYears().addAll(List.of(year.get()));
         }
         DomainEventPublisher.getInstance().publishEvent(new MovieUpdatedEvent(this));
-        System.out.println("Movie.changeInformation event published");
+        log.info("Movie.changeInformation event published");
         if (year.isPresent()) {
             DomainEventPublisher.getInstance().publishEvent(new MovieYearChangedEvent(this));
-            System.out.println("Movie.changeInformation YEAR CHANGED event published");
+            log.info("Movie.changeInformation YEAR CHANGED event published");
         }
     }
 
