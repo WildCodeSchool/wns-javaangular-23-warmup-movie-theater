@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import fr.cinema.domain.commands.CreateMovieCommand;
+import fr.cinema.domain.commands.UpdateMovieCommand;
 import fr.cinema.domain.model.Movie;
 import fr.cinema.domain.model.MovieCollection;
 import fr.cinema.domain.services.MoviesService;
@@ -52,7 +53,8 @@ public class MoviesController{
     @PostMapping("/newMovieWithoutTimes")
     
     public void createMoviePartial(@RequestBody NewMovieWithoutTimesDTO body) throws Exception {
-        moviesService.registerMovie(body.title(), body.price(), body.year(), new ArrayList<>());
+        var command = new CreateMovieCommand(body.title(), body.price(), body.year(), new ArrayList<>());
+        command.execute();
     }
 
     public static record UpdateMovieYearDTO(Long id,short year) {
@@ -60,7 +62,9 @@ public class MoviesController{
 
     @PutMapping("/updateYear")
     public void updateMovieYear(@RequestBody UpdateMovieYearDTO body) throws Exception {
-        moviesService.updateMovie(body.id(), Optional.empty(), Optional.empty(), Optional.of(body.year()), Optional.empty());
+        Movie movie = this.moviesService.getMovieById(body.id()).get();
+        var command = new UpdateMovieCommand(movie, Optional.empty(), Optional.empty(), Optional.of(body.year()), Optional.empty());
+        command.execute();
     }
 
     public static record UpdateMovieDTO(Long id,String title, float price, short year, List<String> times) {
@@ -68,7 +72,9 @@ public class MoviesController{
 
     @PutMapping("/update")
     public void updateMovie(@RequestBody UpdateMovieDTO body) throws Exception {
-        moviesService.updateMovie(body.id(), Optional.of(body.title), Optional.of(body.price), Optional.of(body.year()), Optional.of(body.times));
+        Movie movie = this.moviesService.getMovieById(body.id()).get();
+        var command = new UpdateMovieCommand(movie, Optional.of(body.title), Optional.of(body.price), Optional.of(body.year()), Optional.of(body.times));
+        command.execute();
     }
 
     /**

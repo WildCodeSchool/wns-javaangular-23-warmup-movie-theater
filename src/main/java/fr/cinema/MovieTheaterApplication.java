@@ -14,10 +14,9 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.domain.AfterDomainEventPublication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import fr.cinema.domain.events.DomainEventPublisher;
-import fr.cinema.domain.events.MovieRegisteredEvent;
 import fr.cinema.domain.services.MoviesService;
 import fr.cinema.repositories.MoviesCollectionRepository;
 import fr.cinema.repositories.MoviesRepository;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.models.info.Info;
 import jakarta.transaction.Transactional;
 
 @SpringBootApplication
+@EnableAsync
 public class MovieTheaterApplication {
 
     private static final Logger log = LoggerFactory.getLogger(MovieTheaterApplication.class);

@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import fr.cinema.domain.events.MovieRegisteredEvent;
+import fr.cinema.domain.events.MovieYearChangedEvent;
 import fr.cinema.domain.services.EmailSender;
 
 @Component
@@ -23,12 +25,19 @@ public class Notifier {
 
     @EventListener
     @Order(100)
+    @Async 
     public void onMovieRegistered(MovieRegisteredEvent event) {
-        onMovieYearChanged(event.movie());
+        sendNotificationIfRelevant(event.movie());
+    }
+    @EventListener
+    @Order(100)
+    @Async 
+    public void onMovieYearChanged(MovieYearChangedEvent event) {
+        sendNotificationIfRelevant(event.movie());
     }
 
-    private void onMovieYearChanged(Movie movie) {
-        System.out.println("movie year changed: check notifications");
+    private void sendNotificationIfRelevant(Movie movie) {
+        log.info("movie year changed: check notifications");
         for (short year : movie.getYears()) {
             if (year >= 1980 && year < 1990) {
                 emailSender.sendEmail("nouveau film des années 80",

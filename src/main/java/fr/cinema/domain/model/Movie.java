@@ -1,11 +1,12 @@
 package fr.cinema.domain.model;
 
 import java.util.List;
-
-import org.springframework.context.event.EventListener;
+import java.util.Optional;
 
 import fr.cinema.domain.events.DomainEventPublisher;
 import fr.cinema.domain.events.MovieRegisteredEvent;
+import fr.cinema.domain.events.MovieUpdatedEvent;
+import fr.cinema.domain.events.MovieYearChangedEvent;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -86,7 +87,34 @@ public class Movie {
     }
 
     public void create() {
+        System.out.println("Movie.create requested");
         DomainEventPublisher.getInstance().publishEvent(new MovieRegisteredEvent(this));
+        System.out.println("Movie.create event done");
+    }
+
+    public void changeInformation(Optional<String> title, Optional<Float> price, Optional<Short> year,
+            Optional<List<String>> times) {
+        System.out.println("Movie.changeInformation requested");
+        if (title.isPresent()) {
+            setTitle(title.get());
+        }
+        if (price.isPresent()) {
+            setPrice(price.get());
+        }
+        if (times.isPresent()) {
+            getTimes().clear();
+            getTimes().addAll(times.get());
+        }
+        if (year.isPresent()) {
+            getYears().clear();
+            getYears().addAll(List.of(year.get()));
+        }
+        DomainEventPublisher.getInstance().publishEvent(new MovieUpdatedEvent(this));
+        System.out.println("Movie.changeInformation event published");
+        if (year.isPresent()) {
+            DomainEventPublisher.getInstance().publishEvent(new MovieYearChangedEvent(this));
+            System.out.println("Movie.changeInformation YEAR CHANGED event published");
+        }
     }
 
 }

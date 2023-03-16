@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 public class EmailSender {
     
     public void sendEmail(String title, String body) {
-        System.out.println("in production, this will sent an email, I promise: " + title);
+        System.out.println("send EMAIL: " + title);
     }
 }

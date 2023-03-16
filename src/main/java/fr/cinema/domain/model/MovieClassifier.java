@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import fr.cinema.domain.events.MovieRegisteredEvent;
+import fr.cinema.domain.events.MovieYearChangedEvent;
 import fr.cinema.repositories.MoviesCollectionRepository;
 import fr.cinema.repositories.MoviesRepository;
 
@@ -29,13 +30,19 @@ public class MovieClassifier {
     }
 
     @EventListener
-    @Order(50)
+    @Order(5)
     public void onMovieRegistered(MovieRegisteredEvent event) {
-        onMovieYearChanged(event.movie());
+        updateClassification(event.movie());
     }
 
-    private void onMovieYearChanged(Movie movie) {
-        System.out.println("movie year changed: check classification");
+    @EventListener
+    @Order(5)
+    public void onMovieYearChanged(MovieYearChangedEvent event) {
+        updateClassification(event.movie());
+    }
+
+    private void updateClassification(Movie movie) {
+        log.info("movie year changed: check classification");
         for (short year : movie.getYears()) {
             var matchingCollections = this.moviesCollectionRepository
                     .findByMoviesTitleContainingIgnoreCase(movie.getTitle());
