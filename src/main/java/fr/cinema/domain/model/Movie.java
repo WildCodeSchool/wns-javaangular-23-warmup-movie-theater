@@ -2,6 +2,10 @@ package fr.cinema.domain.model;
 
 import java.util.List;
 
+import org.springframework.context.event.EventListener;
+
+import fr.cinema.domain.events.DomainEventPublisher;
+import fr.cinema.domain.events.MovieRegisteredEvent;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -16,7 +20,6 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     private String title;
 
@@ -41,7 +44,7 @@ public class Movie {
         this.price = price;
         this.times = times;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -49,30 +52,41 @@ public class Movie {
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public List<Short> getYears() {
         return years;
     }
+
     public void setYears(List<Short> years) {
         this.years = years;
     }
+
     public float getPrice() {
         return price;
     }
+
     public void setPrice(float price) {
         this.price = price;
     }
+
     public List<String> getTimes() {
         return times;
     }
+
     public void setTimes(List<String> times) {
         this.times = times;
     }
 
-    
+    public void create() {
+        DomainEventPublisher.getInstance().publishEvent(new MovieRegisteredEvent(this));
+    }
+
 }

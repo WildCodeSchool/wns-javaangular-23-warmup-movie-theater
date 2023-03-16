@@ -2,10 +2,8 @@ package fr.cinema;
 
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.AfterDomainEventPublication;
 
-import fr.cinema.domain.model.Movie;
+import fr.cinema.domain.events.DomainEventPublisher;
+import fr.cinema.domain.events.MovieRegisteredEvent;
 import fr.cinema.domain.services.MoviesService;
 import fr.cinema.repositories.MoviesCollectionRepository;
 import fr.cinema.repositories.MoviesRepository;
@@ -42,6 +43,9 @@ public class MovieTheaterApplication {
     @Autowired
     MoviesService moviesService;
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @EventListener
     @Transactional
     public void onApplicationEvent(ApplicationStartedEvent event) {
@@ -63,6 +67,9 @@ public class MovieTheaterApplication {
             log.error("cannot load movies from CSV", e);
             throw new RuntimeException("cannot load movies from CSV", e);
         }
+        log.info("=======> MOVIE THEATER --- DATA INSERTED");
+
+        DomainEventPublisher.getInstance().setPublisher(applicationEventPublisher);
 
         log.info("=======> MOVIE THEATER --- INIT COMPLETE");
     }
@@ -73,4 +80,5 @@ public class MovieTheaterApplication {
                 .info(new Info().title("Gestion de films")
                         .description("L'architecture de l'application a été revue"));
     }
+
 }

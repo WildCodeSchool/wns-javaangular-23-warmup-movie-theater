@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import fr.cinema.domain.commands.CreateMovieCommand;
 import fr.cinema.domain.model.Movie;
 import fr.cinema.domain.model.MovieCollection;
 import fr.cinema.domain.services.MoviesService;
@@ -41,7 +42,8 @@ public class MoviesController{
 
     @PostMapping("/newMovie")
     public void createMovie(@RequestBody NewMovieDTO body) throws Exception {
-        moviesService.registerMovie(body.title(), body.price(), body.year(), body.times());
+        var command = new CreateMovieCommand(body.title(), body.price(), body.year(), body.times());
+        command.execute();
     }
 
     public static record NewMovieWithoutTimesDTO(String title, float price, short year) {

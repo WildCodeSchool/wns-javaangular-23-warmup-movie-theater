@@ -87,60 +87,6 @@ public class MoviesService {
         }
     }
 
-    private void onMovieYearChanged(Movie movie) {
-        for (short year : movie.getYears()) {
-            if (year >= 1980 && year < 1990) {
-                emailSender.sendEmail("nouveau film des années 80",
-                        "Le film " + movie.getTitle() + "(" + year + ")" + " a été intégré");
-            } else if (year == 1977) {
-                emailSender.sendEmail("un film de 1977 est rentré",
-                        "Le film " + movie.getTitle() + " de l'année 1977 suivie par mail a été intégré");
-            }
-
-            // supprime le film des collections dans lesquelles il était
-            var matchingCollections = this.moviesCollectionRepository
-                    .findByMoviesTitleContainingIgnoreCase(movie.getTitle());
-            for (MovieCollection c : matchingCollections) {
-                c.getMovies().remove(movie);
-                this.moviesCollectionRepository.save(c);
-            }
-
-            // ajouter le film à une collection
-            String vieuxFilmCOllectionName = "vieux films";
-            if (year < 1950) {
-                System.out.println("un vieux film est disponible");
-
-                List<MovieCollection> collectionsVieuxFilm = this.moviesCollectionRepository
-                        .findByTitleContainingIgnoreCase(vieuxFilmCOllectionName);
-
-                MovieCollection collectionVieuxFilm;
-                if (collectionsVieuxFilm.isEmpty()) {
-                    collectionVieuxFilm = new MovieCollection(vieuxFilmCOllectionName);
-                } else {
-                    collectionVieuxFilm = collectionsVieuxFilm.get(0);
-
-                }
-                collectionVieuxFilm.getMovies().add(movie);
-                this.moviesCollectionRepository.save(collectionVieuxFilm);
-
-            } else if (year == LocalDate.now().getYear()) {
-                System.out.println("un film de l'année est disponible");
-
-                List<MovieCollection> collectionsFilmDeLannee = this.moviesCollectionRepository
-                        .findByTitleContainingIgnoreCase("film de l'année");
-
-                MovieCollection targetCollection;
-                if (collectionsFilmDeLannee.isEmpty()) {
-                    targetCollection = new MovieCollection("film de l'année");
-                } else {
-                    targetCollection = collectionsFilmDeLannee.get(0);
-
-                }
-                targetCollection.getMovies().add(movie);
-                this.moviesCollectionRepository.save(targetCollection);
-            }
-        }
-    }
 
     public void loadFromCsv(Path csvFilePath) throws IOException {
         log.info("load movies from csv: " + csvFilePath);
